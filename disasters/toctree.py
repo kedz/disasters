@@ -2,7 +2,8 @@ from BeautifulSoup import BeautifulSoup
 import nltk
 import re
 
-class ClusterTree:
+
+class TOCTree:
     def __init__(self, label, items=None, urls=None, children=None):
         self.label = label
         self.items = items if items else []
@@ -85,6 +86,11 @@ class ClusterTree:
             yield n
             Q.extend(n.children)
             
+    def dfs_iter(self):
+        yield self
+        for child in self.children:
+            for desc in child.dfs_iter():
+                yield desc
 
     def to_ipython(self):
         import pygraphviz as pgv
@@ -120,7 +126,7 @@ def from_wiki(f):
 
     toctablediv = parsed_html.find('div', attrs={'id':'toc'})
     grafs, urls = _recover_section_text(parsed_html)
-    r = ClusterTree('Abstract', items=grafs, urls=urls)    
+    r = TOCTree('Abstract', items=grafs, urls=urls)    
 
     if toctablediv:
         toctable = toctablediv.find('ul')
@@ -139,7 +145,7 @@ def _recover_wiki_tree(el, soup, root, indent=''):
             sublist = li.find('ul')
             safe_text = toctext.replace(' ', '_')
             grafs, urls = _recover_section_text(soup, safe_text)
-            node = ClusterTree(toctext, items=grafs, urls=urls)
+            node = TOCTree(toctext, items=grafs, urls=urls)
             _recover_wiki_tree(sublist, soup, node, indent+'\t')
             root.children.append(node)
   
@@ -153,8 +159,9 @@ def _recover_section_text(soup, section=None):
         tag = soup.find('span', attrs={'id':section}).parent
     else:
         tag = soup.find('p', recursive=False)
-        clean_text = _extract_clean_text(tag, soup)
+        clean_text, links = _extract_clean_text(tag, soup)
         grafs.append(clean_text)
+        urls.append(links)
     while True:
         if not tag:
             break
@@ -186,11 +193,11 @@ def _extract_clean_text(tag, soup):
                     links.append(atag['href'])
         #else:
         #    print ref('a')
-    clean_text = nltk.clean_html(repr(tag))
-    clean_text = clean_text.replace('&#160;',' ')
-    clean_text = clean_text.replace('\s', ' ')
-    clean_text = re.sub('\[\d+\]', '', clean_text)
-    clean_text = clean_text.strip()
+    clean_text = nltk.clean_html(repr(tag).decode('utf-8'))
+    clean_text = clean_text.replace(u'&#160;',u' ')
+    clean_text = clean_text.replace(u'\s', u' ')
+    clean_text = re.sub('\[\d+\]', u'', clean_text)
+    clean_text = unicode(clean_text.strip())
     return (clean_text, links)
 
 def num_subtrees_with_label(root, label):
@@ -227,9 +234,4 @@ def subtrees_with_label_re(root, regex):
             match = subtrees_with_label_re(c, regex)
             matches.extend(match)
         return matches
-
-
-
-
-
 
