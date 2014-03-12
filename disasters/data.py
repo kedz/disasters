@@ -19,16 +19,13 @@ _disaster_categories = ('hurricanes', 'typhoons',
 def get_cats():
     return _disaster_categories
 
-    #c = clustertree.from_wiki(open(html, 'r'))
-    #itrees = clustertree.subtrees_with_label_re(c, re.compile(r'impact', re.I))
-    #return [(cat, (html.split('/')[-1], it)) for it in itrees]
-
 def get_disasters(disaster_type):
     disasters = []
-    dfile = open(os.path.join(_wiki_disaster_dir, '{}.txt'.format(disaster_type)), 'r')
+    dfile = open(os.path.join(_wiki_disaster_dir,
+                              '{}.txt'.format(disaster_type)), 'r')
     for line in dfile:
         title, date_str = line.strip().split('\t')
-        date = datetime.strptime(date_str, "%m/%d/%y")
+        date = datetime.strptime(date_str, '%m/%d/%y')
         disasters.append((title, date))
     dfile.close()
     return disasters
@@ -66,4 +63,3 @@ def get_html(category, num_revs=1, latest_first=False):
         revs.sort(key=lambda x: x[0], reverse=latest_first)
         pages.append([rev[1] for rev in revs[0:num_revs]])
     return pages
-
