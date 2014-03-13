@@ -13,6 +13,15 @@ parser.add_argument('--outputdir', help='directory to write xml',
                     default='xml')
 parser.add_argument('--flat',
                     action='store_true')
+parser.add_argument('--mem', help='heap mem size for java',
+	            type=str, default='3G')
+parser.add_argument('--threads', help='number of processor threads',
+                    default=1, type=int)
+parser.add_argument('-a', '--annotators',
+                    help='Corenlp annotators, comma separated.',
+                    type=unicode, default=None)
+
+
 args = parser.parse_args()
 
 print 'flat', args.flat
@@ -21,6 +30,8 @@ print 'inputdir', args.inputdir
 is_flat = args.flat
 indir = args.inputdir
 outdir = args.outputdir
+antrs = args.annotators.split(',') if args.annotators is not None else None
+
 
 if not os.path.exists(indir) or not os.path.isdir(indir):
     sys.stderr.write(
@@ -41,11 +52,10 @@ for path, dirs, files in os.walk(indir):
     for fname in files:
         filelist.append(os.path.join(path, fname))
 
-
-corenlp.pipeline.files2dir(filelist, outdir, annotators=['tokenize',
-                                                         'ssplit',
-                                                         'pos',
-                                                         'lemma'])
+corenlp.pipeline.files2dir(filelist, outdir, 
+                           mem=args.mem,
+                           threads=args.threads,
+                           annotators=antrs)
 
 import shutil
 if is_flat:
