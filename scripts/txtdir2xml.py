@@ -57,24 +57,17 @@ corenlp.pipeline.files2dir(filelist, outdir,
                            threads=args.threads,
                            annotators=antrs)
 
-import shutil
-if is_flat:
-    for fname in os.listdir(outdir):
-        if fname.endswith('.txt.xml'):
-            new_fname = fname.replace('.txt.xml', '.xml')
-            src = os.path.join(outdir, fname)
-            dest = os.path.join(outdir, new_fname)
-            shutil.move(src, dest)
-
+# Recreate directory structure.
 if not is_flat:
+    import shutil
     for fpath in filelist:
         rel_path = os.path.normpath(fpath.split(indir)[1])
         if rel_path[0] == os.path.sep:
             rel_path = rel_path[1:]
-        dest = os.path.join(outdir,
-                            os.path.splitext(rel_path)[0] + '.xml')
-        src = os.path.join(outdir,
-                           os.path.basename(fpath) + '.xml')
+        dest = os.path.join(outdir, rel_path)
+        bname = os.path.basename(fpath)
+        srcname = os.path.splitext(bname)[0] + u'.xml'
+        src = os.path.join(outdir, srcname)
         if not os.path.exists(os.path.split(dest)[0]):
             os.makedirs(os.path.split(dest)[0])  
         shutil.move(src, dest)
