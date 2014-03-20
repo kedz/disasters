@@ -1,9 +1,11 @@
-CLASS_OUT="classifier_output"
-INST_VEC="instance_vectors"
-CLASS_VEC="class_vectors"
-RESULTS="classification_results.txt"
+ROOTDIR="${HOME}/experiments/disasters/link_classification"
+CLASS_OUT="${ROOTDIR}/classifier_output"
+INST_VEC="${ROOTDIR}/instance_vectors"
+CLASS_VEC="${ROOTDIR}/class_vectors"
+RESULTS="${ROOTDIR}/classification_results.txt"
 DATA="/home/kedz/data/disaster_wikis"
-DF="doc_freqs"
+DF="${ROOTDIR}/doc_freqs"
+
 
 echo
 echo "### 2A) Running Abstract UnSeparated ###"
@@ -17,13 +19,14 @@ python docfreq.py -id ${DATA}/xml/abstract_text -of ${DF}/abs_unsep_txt_all_df.p
 echo
 echo "Building instance vectors..."
 echo "================================"
-python create_instance_vectors.py -id ${DATA}/linked_pages_xml/ -df doc_freqs/abs_unsep_txt_all_df.p -of ${INST_VEC}/linked_pages_abs_instances.p
+python create_instance_vectors.py -id ${DATA}/linked_pages_xml/ -df ${DF}/abs_unsep_txt_all_df.p -of ${INST_VEC}/linked_pages_abs_instances.p
 
 echo
 echo "Building class vectors..."
 echo "================================"
 echo "Creating unnormed class vectors..."
 python create_class_vectors.py -id ${DATA}/xml/abstract_text/ -df ${DF}/abs_unsep_txt_all_df.p -of ${CLASS_VEC}/abs_unsep_unnorm_class_vectors.p
+echo "--"
 echo "Creating normed class vectors..."
 python create_class_vectors.py -id ${DATA}/xml/abstract_text/ -df ${DF}/abs_unsep_txt_all_df.p -of ${CLASS_VEC}/abs_unsep_norm_class_vectors.p -n
 
@@ -60,13 +63,14 @@ python docfreq.py -id ${DATA}/xml/impact_text -of ${DF}/imp_unsep_txt_all_df.p
 echo
 echo "Building instance vectors..."
 echo "================================"
-python create_instance_vectors.py -id ${DATA}/linked_pages_xml/ -df doc_freqs/imp_unsep_txt_all_df.p -of ${INST_VEC}/linked_pages_imp_instances.p
+python create_instance_vectors.py -id ${DATA}/linked_pages_xml/ -df ${DF}/imp_unsep_txt_all_df.p -of ${INST_VEC}/linked_pages_imp_instances.p
 
 echo
 echo "Building class vectors..."
 echo "================================"
 echo "Creating unnormed class vectors..."
 python create_class_vectors.py -id ${DATA}/xml/impact_text/ -df ${DF}/imp_unsep_txt_all_df.p -of ${CLASS_VEC}/imp_unsep_unnorm_class_vectors.p
+echo "--"
 echo "Creating normed class vectors..."
 python create_class_vectors.py -id ${DATA}/xml/impact_text/ -df ${DF}/imp_unsep_txt_all_df.p -of ${CLASS_VEC}/imp_unsep_norm_class_vectors.p -n
 
@@ -104,13 +108,14 @@ python docfreq.py -id ${DATA}/xml/history_text -of ${DF}/his_unsep_txt_all_df.p
 echo
 echo "Building instance vectors..."
 echo "================================"
-python create_instance_vectors.py -id ${DATA}/linked_pages_xml/ -df doc_freqs/his_unsep_txt_all_df.p -of ${INST_VEC}/linked_pages_his_instances.p
+python create_instance_vectors.py -id ${DATA}/linked_pages_xml/ -df ${DF}/his_unsep_txt_all_df.p -of ${INST_VEC}/linked_pages_his_instances.p
 
 echo
 echo "Building class vectors..."
 echo "================================"
 echo "Creating unnormed class vectors..."
 python create_class_vectors.py -id ${DATA}/xml/history_text/ -df ${DF}/his_unsep_txt_all_df.p -of ${CLASS_VEC}/his_unsep_unnorm_class_vectors.p
+echo "--"
 echo "Creating normed class vectors..."
 python create_class_vectors.py -id ${DATA}/xml/history_text/ -df ${DF}/his_unsep_txt_all_df.p -of ${CLASS_VEC}/his_unsep_norm_class_vectors.p -n
 
